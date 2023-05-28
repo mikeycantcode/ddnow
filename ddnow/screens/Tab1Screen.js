@@ -31,6 +31,9 @@ function Tab1Screen() {
                 }}
                 showsUserLocation={true}
             />
+            <View style={styles.queueContainer}>
+                <Text style={styles.queueText}>QUEUE: <Text style={styles.queueNumber}>4</Text></Text>
+            </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() => console.log('Drive Now Pressed')}>
                     <Text style={styles.buttonText}>Drive Now!</Text>
@@ -53,6 +56,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         margin: 10,
     },
+    queueContainer: {
+        position: 'absolute',
+        bottom: 55,
+        alignItems: 'center',
+        backgroundColor: 'white',
+        paddingHorizontal: 100,
+        paddingVertical: 30,
+        borderRadius: 20,
+    },
+    queueText: {
+        color: 'black',
+        fontFamily: 'System',
+        left: -80,
+        top: -17,
+    },
+    queueNumber: {
+        color: 'black',
+        right: -80,
+        top: -17,
+    },
     map: {
         flex: 1,
         position: 'absolute',
@@ -63,20 +86,21 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 29,
         alignSelf: 'center'
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: '#006ee6',
         borderRadius: 90,
-        paddingVertical: 15,
+        paddingVertical: 11,
         paddingHorizontal: 30,
     },
     buttonText: {
         color: 'white',
         fontSize: 30,
-        textAlign: 'center'
-    }
+        textAlign: 'center',
+        fontFamily: 'System',
+    },
 });
 
 export default Tab1Screen;
