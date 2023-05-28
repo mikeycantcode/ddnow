@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 function Tab5Screen() {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>This is Tab 1!</Text>
+            <Text style={styles.text}>About</Text>
         </View>
     );
 }

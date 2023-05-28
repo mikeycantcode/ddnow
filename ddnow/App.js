@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 // Import the screens for your five tabs
 import Tab1Screen from './screens/Tab1Screen';
@@ -14,11 +16,31 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Tab1" component={Tab1Screen} />
-      <Tab.Screen name="Tab2" component={Tab2Screen} />
-      <Tab.Screen name="Tab3" component={Tab3Screen} />
-      <Tab.Screen name="Tab4" component={Tab4Screen} />
-      <Tab.Screen name="Tab5" component={Tab5Screen} />
+      <Tab.Screen name="Drive" component={Tab1Screen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="car-outline" color={color} size={size} />
+        ),
+      }} />
+      <Tab.Screen name="Queue" component={Tab2Screen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="list-outline" color={color} size={size} />
+        ),
+      }} />
+      <Tab.Screen name="Profile" component={Tab3Screen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="person-circle-outline" color={color} size={size} />
+        ),
+      }} />
+      <Tab.Screen name="Stats" component={Tab4Screen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="stats-chart" color={color} size={size} />
+        ),
+      }} />
+      <Tab.Screen name="About" component={Tab5Screen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="help-circle-outline" color={color} size={size} />
+        ),
+      }} />
     </Tab.Navigator>
   );
 }
