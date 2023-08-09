@@ -3,8 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
-function Tab1Screen() {
+function Tab1Screen({ navigation }) {
     const [location, setLocation] = useState(null);
+
 
     useEffect(() => {
         (async () => {
@@ -35,7 +36,7 @@ function Tab1Screen() {
                 <Text style={styles.queueText}>QUEUE: <Text style={styles.queueNumber}>4</Text></Text>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => console.log('Drive Now Pressed')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CurrentDrive')}>
                     <Text style={styles.buttonText}>Drive Now!</Text>
                 </TouchableOpacity>
             </View>
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     button: {
-        backgroundColor: '#006ee6',
+        backgroundColor: '#D5DCEE',
         borderRadius: 90,
         paddingVertical: 11,
         paddingHorizontal: 30,

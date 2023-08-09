@@ -1,59 +1,76 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, Text, StyleSheet, Dimensions } from 'react-native';
 
-function Tab2Screen() {
-    // Dummy data
+// Use percentage-based dimensions for better responsiveness
+const { width, height } = Dimensions.get('window');
+
+// Constants
+const CONTAINER_COLOR = '#D5DCEE';
+const TEXT_COLOR = '#000';
+const ITEM_COLOR = '#FDFDFD';
+const SEPARATOR_COLOR = '#bbb';
+
+const QueueListItem = ({ name, phoneNumber, location }) => (
+    <View style={styles.queueItem}>
+        <Text style={styles.queueText}>Name: {name}</Text>
+        <Text style={styles.queueText}>Phone Number: {phoneNumber}</Text>
+        <Text style={styles.queueText}>Location: {location}</Text>
+    </View>
+);
+
+const Tab2Screen = () => {
+    // Queue data
     const queue = [
         { name: 'John Doe', phoneNumber: '123-456-7890', location: 'Location 1' },
         { name: 'Jane Doe', phoneNumber: '098-765-4321', location: 'Location 2' },
-        { name: 'Jackie Doe', phoneNumber: '098-765-4321', location: 'Location 3' },
-        { name: 'Treesh Doe', phoneNumber: '098-765-4321', location: 'Location 4' },
-        // Add more dummy data as needed
+        { name: 'Jacky Doe', phoneNumber: '143-456-7890', location: 'Location 1' },
+        { name: 'Treesh Doe', phoneNumber: '923-765-4321', location: 'Location 2' },
+        // ...additional data
     ];
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.queueContainer}>
-                {queue.map((item, index) => (
-                    <View key={index} style={styles.queueItem}>
-                        <Text style={styles.queueText}>Name: {item.name}</Text>
-                        <Text style={styles.queueText}>Phone Number: {item.phoneNumber}</Text>
-                        <Text style={styles.queueText}>Location: {item.location}</Text>
-                    </View>
-                ))}
-            </ScrollView>
+            <FlatList
+                data={queue}
+                renderItem={({ item }) => <QueueListItem {...item} />}
+                keyExtractor={(item) => item.phoneNumber}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                contentContainerStyle={styles.listContainer}
+            />
+            {/* Adding the small dark text at the bottom */}
+            <Text style={styles.morePeopleText}>More people will get added to the queue as they call in</Text>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: CONTAINER_COLOR,
     },
-    text: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
+    listContainer: {
+        padding: width * 0.05,
     },
-    queueContainer: {
-        backgroundColor: '#F5F5DC', // Beige color
-        borderRadius: 15,
-        padding: 1,
+    separator: {
+        height: 1,
+        backgroundColor: SEPARATOR_COLOR,
+        marginVertical: height * 0.01,
     },
     queueItem: {
-        borderWidth: 1,
-        borderColor: '#000',
-        padding: 30,
-        margin: 10,
-        backgroundColor: '#FDFDFD',
-        borderRadius: 15, // Rounded corners
+        padding: width * 0.05,
+        backgroundColor: ITEM_COLOR,
+        borderRadius: 15,
     },
     queueText: {
         fontSize: 16,
-        margin: 5,
+        color: TEXT_COLOR,
+        margin: height * 0.005,
+    },
+    morePeopleText: {
+        fontSize: 12,
+        color: '#333', // Dark color
+        marginVertical: height * 0.01,
     },
 });
 

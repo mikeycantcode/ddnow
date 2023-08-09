@@ -60,7 +60,7 @@ function Tab3Screen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#D5DCDD',
         alignItems: 'center',
         padding: 20,
     },

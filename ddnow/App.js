@@ -1,17 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// Import the screens for your five tabs
+// Import the screens for your five tabs and the CurrentDrive screen
 import Tab1Screen from './screens/Tab1Screen';
 import Tab2Screen from './screens/Tab2Screen';
 import Tab3Screen from './screens/Tab3Screen';
 import Tab4Screen from './screens/Tab4Screen';
 import Tab5Screen from './screens/Tab5Screen';
+import CurrentDrive from './screens/CurrentDrive';  // Make sure this path is correct
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();  // Stack navigator
 
 function MyTabs() {
   return (
@@ -48,7 +51,10 @@ function MyTabs() {
 export default function App() {
   return (
     <NavigationContainer>
-      <MyTabs />
+      <Stack.Navigator initialRouteName="MyTabs">
+        <Stack.Screen name="MyTabs" component={MyTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="CurrentDrive" component={CurrentDrive} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
