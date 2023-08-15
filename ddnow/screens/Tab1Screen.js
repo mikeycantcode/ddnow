@@ -1,49 +1,121 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, PanResponder, Animated, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import MapView from 'react-native-maps';
-import * as Location from 'expo-location';
 
-function Tab1Screen({ navigation }) {
-    const [location, setLocation] = useState(null);
+function Tab1Screen() {
+    const navigation = useNavigation();
+    const personData = [
+        {
+            id: 1,
+            name: 'Person 1',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            pickupLocation: { lat: 789, long: 987 },
+            timeOfRequest: 'some time',
+            number: '123-456-7890',
+        },
+        {
+            id: 3,
+            name: 'Person 1',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            pickupLocation: { lat: 789, long: 987 },
+            timeOfRequest: 'some time',
+            number: '123-456-7890',
+        },
+        {
+            id: 4,
+            name: 'Person 1',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            pickupLocation: { lat: 789, long: 987 },
+            timeOfRequest: 'some time',
+            number: '123-456-7890',
+        },
+        {
+            id: 9,
+            name: 'Person 1',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            pickupLocation: { lat: 789, long: 987 },
+            timeOfRequest: 'some time',
+            number: '123-456-7890',
+        },
+        // Add more person objects here
+    ];
+    const [expanded, setExpanded] = useState(false);
+    const translateY = new Animated.Value(expanded ? 0 : 400);
+    const translateYInterpolation = translateY.interpolate({
+        inputRange: [0, 400],
+        outputRange: [0, 400],
+        extrapolate: 'clamp',
+    });
 
-
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                alert('Permission to access location was denied');
-                return;
+    const panResponder = PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+            return Math.abs(gestureState.dy) > 5;
+        },
+        onPanResponderMove: (_, gestureState) => {
+            if (gestureState.dy <= 0 && gestureState.dy >= 400) {
+                translateY.setValue(gestureState.dy);
             }
-
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        })();
-    }, []);
+        },
+        onPanResponderRelease: (_, gestureState) => {
+            if (gestureState.dy <= -100) {
+                setExpanded(true);
+                Animated.timing(translateY, {
+                    toValue: 400,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } else if (gestureState.dy >= 100 && expanded) {
+                setExpanded(false);
+                Animated.timing(translateY, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } else {
+                // Return to the initial position
+                Animated.timing(translateY, {
+                    toValue: 400,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            }
+        },
+    });
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                initialRegion={{
-                    latitude: location ? location.coords.latitude : 37.78825,
-                    longitude: location ? location.coords.longitude : -122.4324,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
-                showsUserLocation={true}
-            />
-            <View style={styles.queueContainer}>
-                <Text style={styles.queueText}>QUEUE: <Text style={styles.queueNumber}>4</Text></Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CurrentDrive')}>
-                    <Text style={styles.buttonText}>Drive Now!</Text>
-                </TouchableOpacity>
-            </View>
+            <MapView style={styles.map} />
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+            <Animated.View
+                style={[
+                    styles.driveSymbolContainer,
+                    {
+                        transform: [{ translateY: translateYInterpolation }],
+                    },
+                ]}
+                {...panResponder.panHandlers}
+            >
+                <View style={styles.draggableHandle} />
+                <FlatList
+                    data={personData.slice(0, expanded ? personData.length : 3)}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity style={styles.queueItem}>
+                            <Text style={styles.queueName}>{item.name}</Text>
+                        </TouchableOpacity>
+                    )}
+                />
+            </Animated.View>
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -51,31 +123,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
-    },
-    text: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    queueContainer: {
-        position: 'absolute',
-        bottom: 55,
-        alignItems: 'center',
-        backgroundColor: 'white',
-        paddingHorizontal: 100,
-        paddingVertical: 30,
-        borderRadius: 20,
-    },
-    queueText: {
-        color: 'black',
-        fontFamily: 'System',
-        left: -80,
-        top: -17,
-    },
-    queueNumber: {
-        color: 'black',
-        right: -80,
-        top: -17,
     },
     map: {
         flex: 1,
@@ -85,22 +132,42 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
-    buttonContainer: {
+    backButton: {
         position: 'absolute',
-        bottom: 29,
-        alignSelf: 'center'
+        top: 40,
+        left: 20,
     },
-    button: {
-        backgroundColor: '#D5DCEE',
-        borderRadius: 90,
-        paddingVertical: 11,
-        paddingHorizontal: 30,
+    backButtonText: {
+        fontSize: 16,
+        color: 'black',
     },
-    buttonText: {
+    driveSymbolContainer: {
+        position: 'absolute',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
+        backgroundColor: 'white',
+        width: 400,
+    },
+    draggableHandle: {
+        width: 40,
+        height: 10, // Increase the height to make it easier to drag
+        backgroundColor: 'gray',
+        borderRadius: 5, // Adjust the border radius accordingly
+        marginBottom: 10, // Increase the marginBottom for better spacing
+    },
+    queueItem: {
+        backgroundColor: 'gray',
+        borderRadius: 20,
+        padding: 10,
+        marginVertical: 5,
+        width: 300,
+    },
+    queueName: {
+        fontSize: 16,
         color: 'white',
-        fontSize: 30,
         textAlign: 'center',
-        fontFamily: 'System',
     },
 });
 

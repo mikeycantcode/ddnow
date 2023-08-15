@@ -1,30 +1,91 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, StyleSheet, Dimensions } from 'react-native';
 
 // Use percentage-based dimensions for better responsiveness
 const { width, height } = Dimensions.get('window');
 
 // Constants
-const CONTAINER_COLOR = '#D5DCEE';
+const CONTAINER_COLOR = '#1e90ff';
 const TEXT_COLOR = '#000';
 const ITEM_COLOR = '#FDFDFD';
-const SEPARATOR_COLOR = '#bbb';
+const SEPARATOR_COLOR = '#eee';
 
-const QueueListItem = ({ name, phoneNumber, location }) => (
-    <View style={styles.queueItem}>
-        <Text style={styles.queueText}>Name: {name}</Text>
-        <Text style={styles.queueText}>Phone Number: {phoneNumber}</Text>
-        <Text style={styles.queueText}>Location: {location}</Text>
-    </View>
-);
+const QueueListItem = ({ name, phoneNumber, timeOfRequest }) => {
+    const [waitingTime, setWaitingTime] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const timeDifference = Math.floor((Date.now() - new Date(timeOfRequest).getTime()) / 1000);
+            setWaitingTime(timeDifference);
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [timeOfRequest]);
+
+    return (
+        <View style={styles.queueItem}>
+            <Text style={styles.queueText}>Name: {name}</Text>
+            <Text style={styles.queueText}>Phone Number: {phoneNumber}</Text>
+            <Text style={styles.queueText}>Waiting for: {waitingTime} seconds</Text>
+        </View>
+    );
+};
 
 const Tab2Screen = () => {
     // Queue data
     const queue = [
-        { name: 'John Doe', phoneNumber: '123-456-7890', location: 'Location 1' },
-        { name: 'Jane Doe', phoneNumber: '098-765-4321', location: 'Location 2' },
-        { name: 'Jacky Doe', phoneNumber: '143-456-7890', location: 'Location 1' },
-        { name: 'Treesh Doe', phoneNumber: '923-765-4321', location: 'Location 2' },
+        {
+            id: 6,
+            name: 'John Doe',
+            phoneNumber: '123-456-7890',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            timeOfRequest: '2023-08-12T10:00:00', // Replace with actual timestamp
+            number: '123-456-7890',
+
+        },
+        {
+            id: 1,
+            name: 'John Doe',
+            phoneNumber: '123-456-7890',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            timeOfRequest: '2023-08-12T10:00:00', // Replace with actual timestamp
+            number: '123-456-7890',
+
+        },
+        {
+            id: 2,
+            name: 'John Doe',
+            phoneNumber: '123-456-7890',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            timeOfRequest: '2023-08-12T2:30:00', // Replace with actual timestamp
+            number: '123-456-7890',
+
+        },
+        {
+            id: 3,
+            name: 'John Doe',
+            phoneNumber: '123-456-7890',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            timeOfRequest: '2023-08-12T9:30:00', // Replace with actual timestamp
+            number: '123-456-7890',
+
+        },
+        {
+            id: 4,
+            name: 'John Doe',
+            phoneNumber: '123-456-7890',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            timeOfRequest: '2023-08-12T8:00:00', // Replace with actual timestamp
+            number: '123-456-7890',
+
+        },
         // ...additional data
     ];
 
@@ -33,7 +94,7 @@ const Tab2Screen = () => {
             <FlatList
                 data={queue}
                 renderItem={({ item }) => <QueueListItem {...item} />}
-                keyExtractor={(item) => item.phoneNumber}
+                keyExtractor={(item) => item.id.toString()}
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
                 contentContainerStyle={styles.listContainer}
             />

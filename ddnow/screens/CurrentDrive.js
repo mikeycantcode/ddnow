@@ -1,40 +1,93 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, PanResponder, Animated, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MapView from 'react-native-maps';
-import { Ionicons } from '@expo/vector-icons';
 
 function CurrentDrive() {
-    const navigation = useNavigation(); // Get the navigation prop
-    const queue = ['Person 1', 'Person 2', 'Person 3']; // This is the queue of people
+    const navigation = useNavigation();
+    const personData = [
+        {
+            id: 1,
+            name: 'Person 1',
+            coord: { lat: 123, long: 456 },
+            partySize: 3,
+            pickupLocation: { lat: 789, long: 987 },
+            timeOfRequest: 'some time',
+            number: '123-456-7890',
+        },
+        // Add more person objects here
+    ];
+    const [expanded, setExpanded] = useState(false);
+    const translateY = new Animated.Value(0);
+    const screenHeight = Dimensions.get('window').height;
+
+    const panResponder = PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+            return !expanded && gestureState.dy < 0;
+        },
+        onPanResponderMove: (_, gestureState) => {
+            if (gestureState.dy <= 0 && gestureState.dy >= -200) {
+                translateY.setValue(gestureState.dy);
+            }
+        },
+        onPanResponderRelease: (_, gestureState) => {
+            if (gestureState.dy <= -100) {
+                setExpanded(true);
+                Animated.timing(translateY, {
+                    toValue: -200,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } else if (gestureState.dy >= 100 && expanded) {
+                setExpanded(false);
+                Animated.timing(translateY, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } else {
+                // Return to the initial position
+                Animated.timing(translateY, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            }
+        },
+    });
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-            // Set your initial region here
-            />
+            <MapView style={styles.map} />
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color="black" />
+                <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
-            <View style={styles.driveSymbolContainer}>
-                <Ionicons name="car-outline" size={50} color="blue" />
+            <Animated.View
+                style={[
+                    styles.driveSymbolContainer,
+                    {
+                        zIndex: expanded ? 1 : 0,
+                        bottom: expanded ? -200 : 0,
+                        transform: [{ translateY }],
+                    },
+                ]}
+                {...panResponder.panHandlers}
+            >
+                <View style={styles.draggableHandle} />
                 <FlatList
-                    data={queue}
-                    keyExtractor={(item) => item}
+                    data={personData.slice(0, expanded ? personData.length : 3)}
+                    keyExtractor={(item) => item.id.toString()} // Use unique ID as the key
                     renderItem={({ item }) => (
-                        <View style={styles.queueItem}>
-                            <Text style={styles.queueName}>{item}</Text>
-                            <TouchableOpacity style={styles.pickupButton}>
-                                <Text style={styles.pickupButtonText}>Pick Up</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={styles.queueItem}>
+                            <Text style={styles.queueName}>{item.name}</Text>
+                        </TouchableOpacity>
                     )}
                 />
-            </View>
+            </Animated.View>
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -56,33 +109,37 @@ const styles = StyleSheet.create({
         top: 40,
         left: 20,
     },
+    backButtonText: {
+        fontSize: 16,
+        color: 'black',
+    },
     driveSymbolContainer: {
         position: 'absolute',
-        bottom: 55,
         alignItems: 'center',
-        backgroundColor: 'white',
-        paddingHorizontal: 100,
-        paddingVertical: 30,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         borderRadius: 20,
+        backgroundColor: 'white',
+        width: 400,
+    },
+    draggableHandle: {
+        width: 40,
+        height: 5,
+        backgroundColor: 'gray',
+        borderRadius: 2.5,
+        marginBottom: 10,
     },
     queueItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10
+        backgroundColor: 'gray',
+        borderRadius: 20,
+        padding: 10,
+        marginVertical: 5,
+        width: 300,
     },
     queueName: {
         fontSize: 16,
-    },
-    pickupButton: {
-        backgroundColor: 'gray',
-        borderRadius: 5,
-        padding: 5,
-        paddingHorizontal: 10,
-    },
-    pickupButtonText: {
         color: 'white',
-        fontSize: 16,
+        textAlign: 'center',
     },
 });
 

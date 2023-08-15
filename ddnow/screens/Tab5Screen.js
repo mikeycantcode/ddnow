@@ -42,7 +42,7 @@ const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#D5DCED',
+        backgroundColor: '#1e90ff',
     },
     header: {
         flex: 1,
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     disclaimerText: {
+        color: 'white',
         fontSize: 12,
         textAlign: 'center',
     },
