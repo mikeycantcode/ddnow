@@ -67,21 +67,21 @@ function Tab1Screen() {
                 Animated.timing(translateY, {
                     toValue: 400,
                     duration: 300,
-                    useNativeDriver: false,
+                    useNativeDriver: true,
                 }).start();
             } else if (gestureState.dy >= 100 && expanded) {
                 setExpanded(false);
                 Animated.timing(translateY, {
-                    toValue: 0,
+                    toValue: 200,
                     duration: 300,
-                    useNativeDriver: false,
+                    useNativeDriver: true,
                 }).start();
             } else {
                 // Return to the initial position
                 Animated.timing(translateY, {
                     toValue: 400,
                     duration: 300,
-                    useNativeDriver: false,
+                    useNativeDriver: true,
                 }).start();
             }
         },

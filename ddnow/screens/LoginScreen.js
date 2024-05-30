@@ -17,7 +17,7 @@ const LoginScreen = ({ onLogin, onSignUp }) => {
             <View style={styles.loginBox}>
                 <Text style={styles.heading}>Authentication</Text>
                 <TextInput placeholder="Username" style={styles.input} placeholderTextColor="#ccc" />
-                <TextInput placeholder="Password" secureTextEntry style={styles.input} placeholderTextColor="#ccc" />
+                <TextInput placeholder="Password" secureTeextEntry style={styles.input} placeholderTextColor="#ccc" />
                 <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>

@@ -18,7 +18,7 @@ function CurrentDrive() {
         // Add more person objects here
     ];
     const [expanded, setExpanded] = useState(false);
-    const translateY = new Animated.Value(0);
+    const translateY = new Animated.Value(200);
     const screenHeight = Dimensions.get('window').height;
 
     const panResponder = PanResponder.create({
@@ -26,31 +26,31 @@ function CurrentDrive() {
             return !expanded && gestureState.dy < 0;
         },
         onPanResponderMove: (_, gestureState) => {
-            if (gestureState.dy <= 0 && gestureState.dy >= -200) {
+            if (gestureState.dy <= 100 && gestureState.dy >= 200) {
                 translateY.setValue(gestureState.dy);
             }
         },
         onPanResponderRelease: (_, gestureState) => {
-            if (gestureState.dy <= -100) {
+            if (gestureState.dy <= 100) {
                 setExpanded(true);
                 Animated.timing(translateY, {
-                    toValue: -200,
-                    duration: 300,
-                    useNativeDriver: false,
+                    toValue: 400,
+                    duration: 500,
+                    useNativeDriver: true,
                 }).start();
             } else if (gestureState.dy >= 100 && expanded) {
                 setExpanded(false);
                 Animated.timing(translateY, {
                     toValue: 0,
                     duration: 300,
-                    useNativeDriver: false,
+                    useNativeDriver: true,
                 }).start();
             } else {
                 // Return to the initial position
                 Animated.timing(translateY, {
-                    toValue: 0,
+                    toValue: 400,
                     duration: 300,
-                    useNativeDriver: false,
+                    useNativeDriver: true,
                 }).start();
             }
         },
@@ -67,7 +67,7 @@ function CurrentDrive() {
                     styles.driveSymbolContainer,
                     {
                         zIndex: expanded ? 1 : 0,
-                        bottom: expanded ? -200 : 0,
+                        bottom: expanded ? 400 : 0,
                         transform: [{ translateY }],
                     },
                 ]}
